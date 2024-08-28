@@ -4,7 +4,6 @@ import csv
 from colorama import Fore
 from tabulate import tabulate
 from constants import UPDATED_PRICES_HEADERS, SAVED_DATA_PATH, ID_SPLITTER, FIELDNAMES
-import os
 
 
 class PricesUpdater(object):
@@ -13,16 +12,15 @@ class PricesUpdater(object):
         self.updated_data_to_save = []
 
     def prices_scraper(self, saved_data):
-        os.environ["API_Key"] = "d41d8cd98f00b204e9800998ecf8427e"
 
         for trip in saved_data:
 
             response_price_there = requests.get(
                 'https://api.azair.io/scrapfresh.php?id=' + str(trip["id"].split(ID_SPLITTER)[0])
-                + '&apikey=' + os.environ["API_Key"] + '&cache=-1&format=json').json()
+                + '&apikey=d41d8cd98f00b204e9800998ecf8427e&cache=-1&format=json').json()
             response_price_back = requests.get(
                 'https://api.azair.io/scrapfresh.php?id=' + str(str(trip["id"].split(ID_SPLITTER)[1]))
-                + '&apikey=' + os.environ["API_Key"] + '&cache=-1&format=json').json()
+                + '&apikey=d41d8cd98f00b204e9800998ecf8427e&cache=-1&format=json').json()
 
             c = CurrencyConverter()
             there_latest_date = response_price_there["valid"]
