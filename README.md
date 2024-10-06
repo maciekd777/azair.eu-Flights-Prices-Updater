@@ -1,7 +1,35 @@
-### Description
-azair.eu is a website allowing to search for a cheap flights with various different options. This program is designed to scrap trips from azair.eu web search results, save those in which the user is interested in, and then check for updated prices for flights in those trips. Its behaviour can be split into the following actions:
 
-#### Basic behaviour
+# Flights Prices Updater
+
+azair.eu is a website allowing to search for a cheap flights with various different options. This program is designed to scrap trips from azair.eu web search results, save those in which the user is interested in, and then check for updated prices for flights in those trips.
+
+
+
+Basic behaviour
+Print basic data of the saved trips, as well as updated prices of flights that are included in those trips, if any trip is saved
+Ask the user to input the index of the trip he is no longer interested in to delete the trip, or go back to the menu. The user is asked repeatedly for the input as long as he goes back to the menu, or there are no more trips to delete. The user is asked to reinput if the input wasn't an integer, or if the integer was out of range of the indexes.
+Ask the user if he wants to begin with new scraping to save another trip, or quit the program.
+If the user begins with the new scraping, he is asked for the url to azair.eu search results that includes trips he wants to save. The search should be done with the following options:
+English version of the site
+Return flights included, no one-way trips
+Only direct flights
+If any of the above conditions is not satisfied, the user is asked to reinput.
+If the url is ok, the program prints the table with every trip included in the search and asks the user to input the index of the trip he wants to save and follow it's prices, or to input Q to exit the program and save results. The user is asked repeatedly for the input until he enters Q.
+
+
+## Authors
+
+- [@maciekd777](https://github.com/maciekd777)
+
+
+## Tech Stack
+
+**Data preparation:** BeautifulSoup
+
+**Data manipulation:** Pandas
+
+
+## Basic behaviour
 
 * Print basic data of the saved trips, as well as updated prices of flights that are included in those trips, if any trip is saved
 * Ask the user to input the index of the trip he is no longer interested in to delete the trip, or go back to the menu. The user is asked repeatedly for the input as long as he goes back to the menu, or there are no more trips to delete. The user is asked to reinput if the input wasn't an integer, or if the integer was out of range of the indexes.
@@ -12,8 +40,7 @@ azair.eu is a website allowing to search for a cheap flights with various differ
   * Only direct flights
 * If any of the above conditions is not satisfied, the user is asked to reinput.
 * If the url is ok, the program prints the table with every trip included in the search and asks the user to input the index of the trip he wants to save and follow it's prices, or to input Q to exit the program and save results. The user is asked repeatedly for the input until he enters Q.
-
-#### Detailed behaviour
+## Detailed behaviour 
 
 * Program starts with creating `DataReader` object, which reads the csv file `flights_data.csv` via `csv.DictReader`, then save the dictionaries of data in a list `l`, and then returns this list, which value is assign to the variable `saved_data` in the main function. If `saved_data` is successfully crested, the program continues on with creating two empty lists: `check_table` and `updated_prices`. Then, using the `requests` module and the data inside the `saved_data` list, the program is checking for the latest prices of flights included in the trip, which are automatically converted to euros thanks to the `currency_converter` module, and for the date of the latest price changes. Saved values are compared to scraped latest values and results are added to `check_table` for the user friendly table input (using colorama module), and then the latest values are appended to the `updated_prices` list, which is used to overwrite and update `flights_data.csv`. Then, the table is printed, using the `tabulate` module and data from the `check_table` list and the user is asked to either delete the trip entering its index, or go back to the menu by inputting B. The user is asked repeatedly for input (work of the while loop) as long as he enters B or there are no more trips to delete (program gets out of the loop). If the file doesn`t exist at the beginning, an empty list saved_data is created and the program gets out of the loop immediately.
 
@@ -78,3 +105,9 @@ The first requirement is needed to match regular expression used to create `len_
 <img src="7.png" style="width:100%">
 <center>When running the program now, the trip recently added to following shows in the table and the prices of its flights are updated (total price in the table can differ a little bit from the total price shown in the search result, because scraped prices sometimes needs to be converted into euros from various other currencies)</center>
 </figure>
+## Badges
+
+Add badges from somewhere like: [shields.io](https://shields.io/)
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+
