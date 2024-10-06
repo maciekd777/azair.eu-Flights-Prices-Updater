@@ -1,21 +1,7 @@
 
 # Flights Prices Updater
 
-azair.eu is a website allowing to search for a cheap flights with various different options. This program is designed to scrap trips from azair.eu web search results, save those in which the user is interested in, and then check for updated prices for flights in those trips.
-
-
-
-Basic behaviour
-Print basic data of the saved trips, as well as updated prices of flights that are included in those trips, if any trip is saved
-Ask the user to input the index of the trip he is no longer interested in to delete the trip, or go back to the menu. The user is asked repeatedly for the input as long as he goes back to the menu, or there are no more trips to delete. The user is asked to reinput if the input wasn't an integer, or if the integer was out of range of the indexes.
-Ask the user if he wants to begin with new scraping to save another trip, or quit the program.
-If the user begins with the new scraping, he is asked for the url to azair.eu search results that includes trips he wants to save. The search should be done with the following options:
-English version of the site
-Return flights included, no one-way trips
-Only direct flights
-If any of the above conditions is not satisfied, the user is asked to reinput.
-If the url is ok, the program prints the table with every trip included in the search and asks the user to input the index of the trip he wants to save and follow it's prices, or to input Q to exit the program and save results. The user is asked repeatedly for the input until he enters Q.
-
+azair.eu is a website allowing to search for a cheap flights with various different options. This program is designed to scrap flights from azair.eu web search results, save those in which the user is interested in, and then check for their updated prices.
 
 ## Authors
 
