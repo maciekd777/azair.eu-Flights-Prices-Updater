@@ -37,15 +37,15 @@ azair.eu is a website allowing to search for a cheap flights with various differ
   - data appended to list `updated_data_to_save` is a data that will be used to overwrite `flights_data.csv` with the actual prices. Data inside this list is almost identical to `data_to_print`, but prices are not colored, there are no changes to prices, because it doesn't makes sense to save it, and there is additional information about IDs of the flights of the trips. It is needed to scrape information about actual prices of the flights, but it isn't really needed to be printed, so it is not included in the `data_to_print` list.
 Then, the `updated_prices_to_csv` method is called, and data from `updated_data_to_save` is used to overwrite `flights_data.csv` file with `csv.DictWriter`. It is ok to overwrite all the file, because `updated_data_to_save` contains all of the information about each trip that was saved in the file, but with updated prices, so nothing is changed but the prices. Just before the while loop, the method `updated_prices_displayer` is called, and the table with updated prices is printed using `tabulate` module and `data_to_print` list.
 
-<figure>
-<img src="1.png" style="width:100%">
-<center>Two saved trips from Katowice to Milan and the latest prices of the flights. In this example there is no difference between the prices scraped just after the program was run and the ones saved by the program after updating the prices last time</center>
-</figure>
+<div align="center">
+<img src="https://github.com/user-attachments/assets/d895fb81-a133-44c0-8711-b5c730116928">
+<p>Two saved trips from Katowice to Milan and the latest prices of the flights. In this example there is no difference between the prices scraped just after the program was run and the ones saved by the program after updating the prices last time</p>
+</div>
 
-<figure>
-<img src="2.png" style="width:100%">
-<center>The same trips, but with manually changed saved prices, just to show how the program reacts to the prices changes. The latest price of the flight from Katowice to Milan ("1st flight") of the trip indexed "0" is 6 euros less compared to its saved price in the file, however the latest price of the flight from Milan to Katowice ("return flight") is 8 euros bigger compared to its saved price. As a result, the latest total price is now 2 euros bigger compared to the price saved by the program the last time</center>
-</figure>
+<div align="center">
+<img src="https://github.com/user-attachments/assets/e8420639-e871-49b4-8a4e-cfa900caf83b">
+<p>The same trips, but with manually changed saved prices, just to show how the program reacts to the prices changes. The latest price of the flight from Katowice to Milan ("1st flight") of the trip indexed "0" is 6 euros less compared to its saved price in the file, however the latest price of the flight from Milan to Katowice ("return flight") is 8 euros bigger compared to its saved price. As a result, the latest total price is now 2 euros bigger compared to the price saved by the program the last time</p>
+</div>
 
 * After the printing, the program enters the `while` loop, inside which user will be able to delete the trips he already follows. The loop can run as long as length of `remaining_data` is bigger than 0, in other words, as long as there is any trip left to delete. The loop starts with assigning to the `i` variable the return value of the `ask_for_index` function:
  - The `ask_for_index` function is called whenever the program wants to print a `question` to get from the user a value that is inside some `index_range`. In some places in the program there is also a possiblity of inputing a special character `quit_char`, which allows the user to get out from the loop. This function also consist of the `while` loop, but it's created to ask the user again if the input wasn't inside the `index_range` or it wasn't the `quit_char`. If the input is inside the `index_range`, the function returns the input. 
@@ -54,10 +54,10 @@ Then, the `updated_prices_to_csv` method is called, and data from `updated_data_
 
 * After getting out of the while loop, the program is printing the "menu", which isn't actually a menu, it's just a choice between starting new scraping or exiting the program via `sys.exit`. To get the correct input, the `ask_for_index` function is called once again, but this time with a different `question`, `index_range` equals to `[1, 2]`, and no `quit_char`.
 
-<figure>
-<img src="3.png" style="width:100%">
-<center>After getting out of the "deletion" while loop, the program prints out the "menu" where it's asking the user to start new search or exit the program</center>
-</figure>
+<div align="center">
+<img src="https://github.com/user-attachments/assets/4b9124a3-89ce-434e-98a0-fe05d140a625">
+<p>After getting out of the "deletion" while loop, the program prints out the "menu" where it's asking the user to start new search or exit the program</p>
+</div>
 
 * If the user wants to start a new scraping, the object of the `NewDataParser` class is created with couple of lists and `url` attributes. Right after the program enters the while loop, which runs until the method `get_url` doesn't return azair.eu search results link meeting the following requirements:
   * The website must be in english
@@ -65,32 +65,32 @@ Then, the `updated_prices_to_csv` method is called, and data from `updated_data_
   * Only direct flights
 The first requirement is needed to match regular expression used to create `len_of_stay_list`, and the other ones are making sure that search results don't have too many or too few flights. Obviously, inside the `get_url` function the user is asked for the correct url and the function returns the url only if it met all the requirements written using the `re.search` function.
 
+<div align="center">
+<img src="https://github.com/user-attachments/assets/e05ead16-fee2-4a90-83dd-d0e169e57eb3">
+<p>The program asking the user to reinput two times after two wrong inputs, "car", and an azair.eu search results URL, but with "max changes" option equal to 1, not to 0 (direct flights requirement not met)</p>
+</div>
 
-<figure>
-<img src="4.png" style="width:100%">
-<center>The program asking the user to reinput two times after two wrong inputs, "car", and an azair.eu search results URL, but with "max changes" option equal to 1, not to 0 (direct flights requirement not met)</center>
-</figure>
 
 * After inputting the correct URL, the method `parse_results` is called, which use the `beautifulsoup4` module to scrape specific data from the website and append it to one of the lists: `cities_from`, `cities_to`, `id_list`, `dates`, `len_of_stay_list`, `there_price_list`, `back_price_list`, `total_price_list`.
 
 * Right after that, the method `print_parsed_results` is called, and it uses the `pandas` module to create a `DataFrame` object to print a table from the `data_to_print` dictionary, containing lists that are valuable for printing 
 
-<figure>
-<img src="5.png" style="width:100%">
-<center>Printed table with search results of the correct link</center>
-</figure>
+<div align="center">
+<img src="https://github.com/user-attachments/assets/38b49a5d-732b-4e5e-9c09-cc6483b357b8">
+<p>Printed table with search results of the correct link</p>
+</div>
 
 * After printing the table, the `ask_for_index` function is called with `question` about index of the trip he wants to save and follow its flights prices, `index_range` equals to `range(len(id_lists))`, which contains all the indexes next to the trips printed in the table, and if the user doesn't want to save anything, he can quit by inputing `q`, which is the `quit_char` in this situation. After inputting any correct index, the program checks if the IDs of the flights of the trip at that index are already saved in the `saved_data_list`. If so, the program prints "Trip already followed!" and doesn't save anything to the file. If there is no such IDs, the program runs `save_trip` method, which scrapes all the needed information and appends it to the `flights_data.csv` file. When the appending is done, the `data_reader.create_saved_data_list` method is called just to have the newly saved trip inside the `saved_data_list`. It is necessary to do it now, because of the previous checking of the already followed IDs. If we wouldn't update the list, we could add several times the sime trip to followed and it would be appended, not overwritten. After the saving, loop is doing its work and goes back to the beginning to ask the user if he wants to add another trip to followed. The program ends with the user inputting `q`.
 
-<figure>
-<img src="6.png" style="width:100%">
-<center>The user has chosen to follow the flight prices of the trip indexed 9 and did exit the program</center>
-</figure>
+<div align="center">
+<img src="https://github.com/user-attachments/assets/90cbc9e9-d5dc-4246-a729-912da94d174d">
+<p>The user has chosen to follow the flight prices of the trip indexed 9 and did exit the program</p>
+</div>
 
-<figure>
-<img src="7.png" style="width:100%">
-<center>When running the program now, the trip recently added to following shows in the table and the prices of its flights are updated (total price in the table can differ a little bit from the total price shown in the search result, because scraped prices sometimes needs to be converted into euros from various other currencies)</center>
-</figure>
+<div align="center">
+<img src="https://github.com/user-attachments/assets/4ea19f02-042b-4cb6-975b-fc91fc379c08">
+<p>When running the program now, the trip recently added to following shows in the table and the prices of its flights are updated (total price in the table can differ a little bit from the total price shown in the search result, because scraped prices sometimes needs to be converted into euros from various other currencies)</p>
+</div>
 
 ## Badges
 
