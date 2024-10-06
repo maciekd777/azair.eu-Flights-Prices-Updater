@@ -91,6 +91,7 @@ The first requirement is needed to match regular expression used to create `len_
 <img src="7.png" style="width:100%">
 <center>When running the program now, the trip recently added to following shows in the table and the prices of its flights are updated (total price in the table can differ a little bit from the total price shown in the search result, because scraped prices sometimes needs to be converted into euros from various other currencies)</center>
 </figure>
+
 ## Badges
 
 Add badges from somewhere like: [shields.io](https://shields.io/)
