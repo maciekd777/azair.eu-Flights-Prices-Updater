@@ -14,6 +14,15 @@ azair.eu is a website allowing to search for a cheap flights with various differ
 
 **Data manipulation:** Pandas
 
+## Installation
+
+Get the source code and assets from github. Then, install requirements from requirements.txt.
+
+```bash
+git clone https://github.com/maciekd777/azair.eu-Flights-Prices-Updater.git
+python -m pip install -r requirements.txt
+python main.py
+```
 
 ## Basic behaviour
 
