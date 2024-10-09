@@ -24,7 +24,7 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-## Basic behaviour
+## Basic behavior
 
 * Print basic data of the saved trips, as well as updated prices of flights that are included in those trips, if any trip is saved
 * Ask the user to input the index of the trip he is no longer interested in to delete the trip, or go back to the menu. The user is asked repeatedly for the input as long as he goes back to the menu, or there are no more trips to delete. The user is asked to reinput if the input wasn't an integer, or if the integer was out of range of the indexes.
@@ -35,7 +35,8 @@ python main.py
   * Only direct flights
 * If any of the above conditions is not satisfied, the user is asked to reinput.
 * If the url is ok, the program prints the table with every trip included in the search and asks the user to input the index of the trip he wants to save and follow it's prices, or to input Q to exit the program and save results. The user is asked repeatedly for the input until he enters Q.
-## Detailed behaviour 
+
+## Detailed behavior 
 
 * Program starts with creating `DataReader` object, which reads the csv file `flights_data.csv` via `csv.DictReader`, then save the dictionaries of data in a list `l`, and then returns this list, which value is assign to the variable `saved_data` in the main function. If `saved_data` is successfully crested, the program continues on with creating two empty lists: `check_table` and `updated_prices`. Then, using the `requests` module and the data inside the `saved_data` list, the program is checking for the latest prices of flights included in the trip, which are automatically converted to euros thanks to the `currency_converter` module, and for the date of the latest price changes. Saved values are compared to scraped latest values and results are added to `check_table` for the user friendly table input (using colorama module), and then the latest values are appended to the `updated_prices` list, which is used to overwrite and update `flights_data.csv`. Then, the table is printed, using the `tabulate` module and data from the `check_table` list and the user is asked to either delete the trip entering its index, or go back to the menu by inputting B. The user is asked repeatedly for input (work of the while loop) as long as he enters B or there are no more trips to delete (program gets out of the loop). If the file doesn`t exist at the beginning, an empty list saved_data is created and the program gets out of the loop immediately.
 
