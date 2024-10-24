@@ -3,29 +3,34 @@ from constants import SAVED_DATA_PATH, FIELDNAMES
 
 
 class DataReader(object):
-    def __init__(self):
-        self.saved_data_list = []
+    saved_data_list = []
 
-    def create_saved_data_list(self):
+    @classmethod
+    def create_saved_data_list(cls):
+        """
+        Reads the CSV file containing the data of previously saved flights, appends it to the saved_data_list list, and
+        returns it. If the file does not exist, it is created with only header.
+        :return: List of dictionaries containing data of the previously saved trips
+        """
         try:
             with open(SAVED_DATA_PATH) as file:
                 reader = csv.DictReader(file)
                 for flight in reader:
-                    self.saved_data_list.append({
+                    cls.saved_data_list.append({
                         "id": flight["id"],
                         "date": flight["date"],
                         "len_of_stay": flight["len_of_stay"],
                         "from": flight["from"],
                         "to": flight["to"],
-                        "saved_total_price": flight["saved_total_price"],
-                        "saved_there_price": flight["saved_there_price"],
-                        "saved_back_price": flight["saved_back_price"],
-                        "saved_total_price_date": flight["saved_total_price_date"]
+                        "total_price": flight["total_price"],
+                        "there_price": flight["there_price"],
+                        "back_price": flight["back_price"],
+                        "total_price_date": flight["total_price_date"]
                     })
+
         except FileNotFoundError:
             with open(SAVED_DATA_PATH, "w", newline="") as file:
                 writer = csv.DictWriter(file, fieldnames=FIELDNAMES)
                 writer.writeheader()
 
-    def delete_trip(self, index):
-        self.saved_data_list.pop(index)
+        return cls.saved_data_list

@@ -3,108 +3,127 @@ import requests
 import csv
 from colorama import Fore
 from tabulate import tabulate
-from constants import UPDATED_PRICES_HEADERS, SAVED_DATA_PATH, ID_SPLITTER, FIELDNAMES
+from constants import (UPDATED_PRICES_HEADERS, SAVED_DATA_PATH, ID_SPLITTER, FIELDNAMES,
+                       REQUEST_LINE_1, REQUEST_LINE_2, NEW_LINE)
 
 
 class PricesUpdater(object):
-    def __init__(self):
-        self.data_to_print = []
-        self.updated_data_to_save = []
+    data_to_print = []
+    updated_data = []
 
-    def prices_scraper(self, saved_data):
+    @classmethod
+    def check_flights_data(cls, saved_trip):
+        """
+        Parse updated prices of flights of previously saved trip from the website and appends the data to
+        updated_data list. The prices are found using ids of the saved flights and converted to euros through
+        CurrencyConverter.
+        :param saved_trip: Dictionary containing information about the saved flights, which prices are going to be
+        updated.
+        """
+        flight_there_data, flight_back_data = (requests.get(
+                REQUEST_LINE_1 + str(saved_trip["id"].split(ID_SPLITTER)[i]) + REQUEST_LINE_2).json() for i in range(2))
 
-        for trip in saved_data:
+        c = CurrencyConverter()
 
-            response_price_there = requests.get(
-                'https://api.azair.io/scrapfresh.php?id=' + str(trip["id"].split(ID_SPLITTER)[0])
-                + '&apikey=d41d8cd98f00b204e9800998ecf8427e&cache=-1&format=json').json()
-            response_price_back = requests.get(
-                'https://api.azair.io/scrapfresh.php?id=' + str(str(trip["id"].split(ID_SPLITTER)[1]))
-                + '&apikey=d41d8cd98f00b204e9800998ecf8427e&cache=-1&format=json').json()
+        cls.updated_data.append({
+            "id": saved_trip["id"],
+            "date": saved_trip["date"],
+            "len_of_stay": saved_trip["len_of_stay"],
+            "from": saved_trip["from"],
+            "to": saved_trip["to"],
+            "total_price": round(c.convert(flight_there_data["price"], flight_there_data["currency"], 'PLN')
+                                 + c.convert(flight_back_data["price"], flight_back_data["currency"], 'PLN'), 2),
+            "there_price": round(c.convert(flight_there_data["price"], flight_there_data["currency"], 'PLN'), 2),
+            "back_price": round(c.convert(flight_back_data["price"], flight_back_data["currency"], 'PLN'), 2),
+            "total_price_date": cls.check_latest_date(flight_there_data["valid"], flight_back_data["valid"])
+        })
 
-            c = CurrencyConverter()
-            there_latest_date = response_price_there["valid"]
-            there_currency = response_price_there["currency"]
-            there_latest_price = round(c.convert(response_price_there["price"], there_currency, 'EUR'), 2)
-            back_latest_date = response_price_back["valid"]
-            back_currency = response_price_back["currency"]
-            back_latest_price = round(c.convert(response_price_back["price"], back_currency, 'EUR'), 2)
-            total_latest_price = round(there_latest_price + back_latest_price, 2)
+    @classmethod
+    def check_latest_date(cls, there_date, back_date):
+        """
+        Compares the dates of the latest prices of there and return flights, and returns the latest one.
+        :param there_date: The date of the last change in the price of "there" flight (the first flight)
+        :param back_date: The date of the last change in the price of the return flight
+        :return: The latest date from there_date and back_date
+        """
+        if there_date > back_date:
+            latest_date = there_date
+        else:
+            latest_date = back_date
+        return latest_date
 
-            if there_latest_date > back_latest_date:
-                max_latest_date = there_latest_date
-            else:
-                max_latest_date = back_latest_date
+    @classmethod
+    def check_changes(cls, trip, i):
+        """
+        Calculates the difference between saved and newly parsed prices of flights of the trip, and appends specific
+        data to data_to_print list.
+        :param trip: Trip, which data is analyzed
+        :param i: Index of the analyzed trip, at which it's saved (old) data is contained in the saved_data list in the
+        main() function and at which it's updated data is contained in the updated_data list
+        """
+        total_price_change = round(cls.updated_data[i]["total_price"] - float(trip["total_price"]), 2)
+        there_price_change = round(cls.updated_data[i]["there_price"] - float(trip["there_price"]), 2)
+        back_price_change = round(cls.updated_data[i]["back_price"] - float(trip["back_price"]), 2)
 
-            there_price_change = round(there_latest_price - float(trip["saved_there_price"]), 2)
-            back_price_change = round(back_latest_price - float(trip["saved_back_price"]), 2)
-            total_price_change = round(total_latest_price - float(trip["saved_total_price"]), 2)
-
-            if total_price_change > 0:
-                total_price_c = f"{Fore.RED}↑ €{total_latest_price}{Fore.RESET}"
-                total_price_change_c = f"{Fore.RED}+€{total_price_change}{Fore.RESET}"
-            elif total_price_change < 0:
-                total_price_c = f"{Fore.GREEN}↓ €{total_latest_price}{Fore.RESET}"
-                total_price_change_c = f"{Fore.GREEN}-€{abs(total_price_change)}{Fore.RESET}"
-            else:
-                total_price_c = f"€{total_latest_price}"
-                total_price_change_c = f"€{total_price_change}"
-
-            if there_price_change > 0:
-                there_price_c = f"{Fore.RED}↑ €{there_latest_price}{Fore.RESET}"
-                there_price_change_c = f"{Fore.RED}+€{there_price_change}{Fore.RESET}"
-            elif there_price_change < 0:
-                there_price_c = f"{Fore.GREEN}↓ €{there_latest_price}{Fore.RESET}"
-                there_price_change_c = f"{Fore.GREEN}-€{abs(there_price_change)}{Fore.RESET}"
-            else:
-                there_price_c = f"€{there_latest_price}"
-                there_price_change_c = f"€{there_price_change}"
-
-            if back_price_change > 0:
-                back_price_c = f"{Fore.RED}↑ €{back_latest_price}{Fore.RESET}"
-                back_price_change_c = f"{Fore.RED}+€{back_price_change}{Fore.RESET}"
-            elif back_price_change < 0:
-                back_price_c = f"{Fore.GREEN}↓ €{back_latest_price}{Fore.RESET}"
-                back_price_change_c = f"{Fore.GREEN}-€{abs(back_price_change)}{Fore.RESET}"
-            else:
-                back_price_c = f"€{back_latest_price}"
-                back_price_change_c = f"€{back_price_change}"
-
-            self.data_to_print.append({
+        cls.data_to_print.append({
                         "from": trip["from"],
                         "to": trip["to"],
                         "date": trip["date"],
                         "len_of_stay": trip["len_of_stay"],
-                        "latest_price": total_price_c,
-                        "latest_price_change": total_price_change_c,
-                        "there_latest_price": there_price_c,
-                        "there_price_change": there_price_change_c,
-                        "back_latest_price": back_price_c,
-                        "back_price_change": back_price_change_c,
-                        "latest_total_price_date": max_latest_date
+                        "there_latest_price": cls.color_price(cls.updated_data[i]["there_price"], there_price_change),
+                        "there_price_change": cls.color_price(cls.updated_data[i]["there_price"], there_price_change,
+                                                  data_to_color="price_change"),
+                        "back_latest_price": cls.color_price(cls.updated_data[i]["back_price"], back_price_change),
+                        "back_price_change": cls.color_price(cls.updated_data[i]["back_price"], back_price_change,
+                                                             data_to_color="price_change"),
+                        "latest_price": cls.color_price(cls.updated_data[i]["total_price"], total_price_change),
+                        "latest_price_change": cls.color_price(cls.updated_data[i]["total_price"], total_price_change,
+                                                               data_to_color="price_change"),
+                        "total_price_date": cls.updated_data[i]["total_price_date"]
                     })
 
-            self.updated_data_to_save.append({
-                        "id": trip["id"],
-                        "date": trip["date"],
-                        "len_of_stay": trip["len_of_stay"],
-                        "from": trip["from"],
-                        "to": trip["to"],
-                        "saved_total_price": total_latest_price,
-                        "saved_there_price": there_latest_price,
-                        "saved_back_price": back_latest_price,
-                        "saved_total_price_date": max_latest_date
-                    })
+    @classmethod
+    def color_price(cls, price, price_change, data_to_color="price"):
+        """
+        Colors the data in a way depending on the differences between newly parsed and saved (old) prices.
+        :param price: Newly parsed price of the flight
+        :param price_change: The difference between newly parsed and saved (old) price
+        :param data_to_color: Indicates the data, which will be colored and returned. If it's equal to "price",
+        function returns the colored price, otherwise returns the colored price_change
+        :return: Colored price or price_change, depending on the data_to_color parameter
+        """
+        if price_change > 0:
+            colored_price = f"{Fore.RED}↑ {price}{Fore.RESET}"
+            colored_price_change = f"{Fore.RED}{price_change}{Fore.RESET}"
+        elif price_change < 0:
+            colored_price = f"{Fore.GREEN}↓ €{price}{Fore.RESET}"
+            colored_price_change = f"{Fore.GREEN}{abs(price_change)}{Fore.RESET}"
+        else:
+            colored_price = price
+            colored_price_change = price_change
 
-    def updated_prices_displayer(self):
-        print("\n", tabulate(self.data_to_print, headers=UPDATED_PRICES_HEADERS, numalign="center", stralign="center",
-                             showindex=True), "\n")
+        if data_to_color == "price":
+            return colored_price
+        else:
+            return colored_price_change
 
-    def updated_prices_to_csv(self):
+    @classmethod
+    def updated_prices_displayer(cls):
+        """
+        Prints the data from data_to_print in the form of pretty table, using tabulate module.
+        """
+        print(NEW_LINE, tabulate(cls.data_to_print, headers=UPDATED_PRICES_HEADERS, numalign="center",
+                                 stralign="center", showindex=True), NEW_LINE)
+
+    @classmethod
+    def updated_prices_to_csv(cls):
+        """
+        Saves the new data from updated_data list to the CSV file.
+        """
         with open(SAVED_DATA_PATH, "w", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=FIELDNAMES)
             writer.writeheader()
-            for trip in self.updated_data_to_save:
+            for trip in cls.updated_data:
                 writer.writerow(
                     {
                         "id": trip["id"],
@@ -112,13 +131,10 @@ class PricesUpdater(object):
                         "len_of_stay": trip["len_of_stay"],
                         "from": trip["from"],
                         "to": trip["to"],
-                        "saved_total_price": trip["saved_total_price"],
-                        "saved_there_price": trip["saved_there_price"],
-                        "saved_back_price": trip["saved_back_price"],
-                        "saved_total_price_date": trip["saved_total_price_date"]
+                        "total_price": trip["total_price"],
+                        "there_price": trip["there_price"],
+                        "back_price": trip["back_price"],
+                        "total_price_date": trip["total_price_date"]
                     }
                 )
 
-    def reset_lists(self):
-        self.data_to_print = []
-        self.updated_data_to_save = []
