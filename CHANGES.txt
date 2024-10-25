@@ -1,0 +1,6 @@
+1.0
+------
+- Changed the order of the columns of the table with updated prices
+- Deleted 'English version of the site' from the requirements that URL needs to meet
+- Added a message when quiting the programme
+- Changed the way of saving the remaining data after user deleted trips
