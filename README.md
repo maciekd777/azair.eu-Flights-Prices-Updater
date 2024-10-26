@@ -41,7 +41,7 @@ python main.py
 
 ## Notes
 
-* The programme has been tested only on english and polish version of the azair.eu website. Other languages are not promised to work
+* The programme has been tested only on links from english and polish version of the azair.eu website. Links from other languages are not promised to work
 * The prices are saved in polish złoty (PLN). If you want to save prices in other currency, change the code in the following way:
 
 In the `PricesUpdater.py` find `check_flights_data` method, At the end of its body there should be this code:
