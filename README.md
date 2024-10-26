@@ -39,9 +39,10 @@ python main.py
 * If any of the above conditions is not satisfied, the user is asked to reinput.
 * If the url is ok, the programme prints the table with every trip included in the search and asks the user to input the index of the trip he wants to save and follow it's prices, or to input Q to exit the program and save the results. The user is asked repeatedly for the input until he enters Q.
 
-Note that:
-* **The programme has been tested only on english and polish version of the azair.eu website. Other languages are not promised to work**
-* **The prices are saved in polish złoty (PLN). If you want to save prices in other currency, change the code in the following way:**
+## Notes
+
+* The programme has been tested only on english and polish version of the azair.eu website. Other languages are not promised to work
+* The prices are saved in polish złoty (PLN). If you want to save prices in other currency, change the code in the following way:
 
 In the `PricesUpdater.py` find `check_flights_data` method, At the end of its body there should be this code:
 
