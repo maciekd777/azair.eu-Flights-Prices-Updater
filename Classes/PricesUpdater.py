@@ -93,14 +93,14 @@ class PricesUpdater(object):
         :return: Colored price or price_change, depending on the data_to_color parameter
         """
         if price_change > 0:
-            colored_price = f"{Fore.RED}↑ {price}{Fore.RESET}"
-            colored_price_change = f"{Fore.RED}{price_change}{Fore.RESET}"
+            colored_price = f"{Fore.RED}{price} zł{Fore.RESET}"
+            colored_price_change = f"{Fore.RED}↑ {price_change} zł{Fore.RESET}"
         elif price_change < 0:
-            colored_price = f"{Fore.GREEN}↓ €{price}{Fore.RESET}"
-            colored_price_change = f"{Fore.GREEN}{abs(price_change)}{Fore.RESET}"
+            colored_price = f"{Fore.GREEN}{price} zł{Fore.RESET}"
+            colored_price_change = f"{Fore.GREEN}↓ {abs(price_change)} zł{Fore.RESET}"
         else:
-            colored_price = price
-            colored_price_change = price_change
+            colored_price = f"{price} zł"
+            colored_price_change = f"{price_change} zł"
 
         if data_to_color == "price":
             return colored_price
