@@ -2,7 +2,7 @@
 # Flights Prices Updater
 
 <div align="center">
-<img src="https://github.com/user-attachments/assets/282f4003-166b-4300-8ac9-7becb0edf8d8">
+<img src="https://github.com/user-attachments/assets/49f015b5-f49f-4983-95d4-a8cee0e4df72">
 </div>
 
 Do you like exploring the world with budget airlines and keep looking for a bargain to buy a flight ticket? With help of Flights Prices Updater you can easily track changes of the flights found on azair.eu - popular website to look for budget flights opportunities.
